@@ -58,5 +58,9 @@ export async function generateMetadata({
   return {
     title: dict.blogPage.title,
     description: dict.blogPage.subtitle,
+    alternates: {
+      canonical: `/${lang}/blog`,
+      languages: { pt: "/pt/blog", en: "/en/blog" },
+    },
   };
 }

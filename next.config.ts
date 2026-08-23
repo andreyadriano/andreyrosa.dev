@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
   output: "export",
   experimental: {
     mdxRs: true,
+    // O layout raiz "de verdade" do site (app/[lang]/layout.tsx) usa um
+    // segmento dinâmico no topo — não dá pra compor um not-found.tsx normal
+    // porque o layout que ele deveria herdar é justamente o que falhou em
+    // resolver `lang`. globalNotFound é o mecanismo do próprio Next.js pra
+    // esse caso (ver app/global-not-found.tsx).
+    globalNotFound: true,
   },
   images: {
     // output: 'export' não tem servidor pra otimizar imagem sob demanda —

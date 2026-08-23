@@ -6,9 +6,17 @@
 // de conteúdo (/pt/*, /en/*), o <html lang> é corrigido no cliente por
 // LangSync em src/app/[lang]/layout.tsx — ver comentário lá para o porquê.
 
+import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { defaultLocale } from "@/i18n/config";
 import "./globals.css";
+
+// metadataBase raiz: permite que openGraph.images, alternates.canonical etc.
+// declarados em qualquer rota abaixo usem caminho relativo em vez de
+// precisar montar a URL absoluta toda vez.
+export const metadata: Metadata = {
+  metadataBase: new URL("https://andreyrosa.dev"),
+};
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",

@@ -111,8 +111,20 @@ export async function generateMetadata({
 
   if (!mod) return {};
 
+  // Só declara a versão alternada se o post realmente tiver uma tradução
+  // publicada nesse slug — mesma regra que SetLangAlternate usa pro
+  // seletor de idioma, pra não anunciar pro Google um hreflang que 404.
+  const otherLang = locales.find((l) => l !== lang);
+  const translatedSlug = otherLang && mod.metadata.translations?.[otherLang];
+
   return {
     title: mod.metadata.title,
     description: mod.metadata.summary,
+    alternates: {
+      canonical: `/${lang}/blog/${slug}`,
+      ...(otherLang && translatedSlug
+        ? { languages: { [otherLang]: `/${otherLang}/blog/${translatedSlug}` } }
+        : {}),
+    },
   };
 }

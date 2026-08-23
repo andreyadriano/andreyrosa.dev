@@ -19,14 +19,35 @@ arquitetura — leia antes de mexer em conteúdo, i18n, tema ou no pipeline de b
 
 ## Estrutura de rotas
 
-Tudo fica sob `src/app/[lang]/` — `lang` é `"pt" | "en"` (ver `src/i18n/config.ts`). `src/app/page.tsx` (fora de
-`[lang]`) só faz `redirect("/pt")`. Não existe detecção de idioma via `Accept-Language`: o site **não roda com
-`output: 'export'`** apesar do que comentários antigos no código sugerem — é um app Next.js normal (SSR/Route Handlers
-habilitados), necessário porque o PDF do currículo é gerado sob demanda numa Route Handler
-(`src/app/[lang]/resume/pdf/route.ts`).
+Tudo fica sob `src/app/[lang]/` — `lang` é `"pt" | "en"` (ver `src/i18n/config.ts`). Não existe detecção de idioma via
+`Accept-Language`; o padrão é sempre `/pt`.
+
+**O redirect de `/` pra `/pt` é feito por `public/_redirects` (301, sintaxe do Cloudflare Pages), não por
+`src/app/page.tsx`.** `page.tsx` ainda existe e chama `redirect("/pt")`, mas sob `output: 'export'` isso não vira um
+HTTP redirect de verdade — vira uma página HTML quase vazia (`<html id="__next_error__">`, sem `<title>`, sem
+`<meta description>`, corpo oculto) que só redireciona depois que o JS do Next carrega e executa no cliente. Isso já
+causou um problema real: o Google não conseguia associar o favicon à raiz do domínio porque a página que ele indexava
+ali não tinha praticamente nenhum sinal de conteúdo. `public/_redirects` intercepta `/` na borda do Cloudflare antes
+de qualquer HTML ser servido, então esse `index.html` fantasma nunca chega a ser visto em produção — mas se algum dia
+o deploy sair do Cloudflare Pages (outro host estático sem suporte a `_redirects`), esse problema volta, e `page.tsx`
+sozinho não é suficiente pra resolver.
+
+**`output: 'export'` está ativo** (`next.config.ts`, desde o commit "prepare for cloudflare pages") — o site deploya
+como HTML/CSS/JS 100% estático no Cloudflare Pages, sem servidor Node em produção. Isso já foi documentado aqui como
+"não roda com export" numa versão anterior deste arquivo — **estava desatualizado**, não confie em comentários antigos
+sobre isso. Na prática, export estático muda o que uma Route Handler pode fazer: só verbo `GET`, sem depender de
+`Request` (headers/cookies/query), e ela vira um arquivo estático gerado em build time — é assim que o PDF do
+currículo funciona (`src/app/[lang]/resume/pdf/route.ts`, `runtime = "nodejs"` só importa pro build, não pra
+produção) e é assim que `sitemap.ts`/`robots.ts`/`opengraph-image.tsx` funcionam também (todos exigem
+`export const dynamic = "force-static"` quando o Next não consegue inferir isso sozinho — sem essa linha o build
+falha com um erro claro apontando pra isso). Qualquer Route Handler nova precisa seguir essa mesma regra: se ela lê
+`params`/dado estático e devolve sempre o mesmo resultado por combinação de parâmetros, ok; se depende de
+`request.headers`/cookies/query string, não funciona sob export estático.
 
 Rotas atuais: `/[lang]`, `/[lang]/projects`, `/[lang]/blog`, `/[lang]/blog/[slug]`, `/[lang]/resume`,
-`/[lang]/resume/pdf`.
+`/[lang]/resume/pdf`. Fora de `[lang]`: `/sitemap.xml`, `/robots.txt` (raiz, porque precisam listar as duas versões de
+idioma de uma vez) e `/global-not-found.tsx` (404 de qualquer URL que não bate com nenhuma rota — ver seção de SEO
+abaixo pro porquê de não ser um `not-found.tsx` comum).
 
 ## Design tokens — nunca hardcode cor
 
@@ -85,10 +106,42 @@ encontrar).
 ## Currículo / PDF
 
 `src/data/resume.json` é a fonte única. A página `/[lang]/resume` renderiza esse JSON na tela; a Route Handler
-`/[lang]/resume/pdf` (`runtime = "nodejs"`, precisa de Node — não roda em Edge) gera o PDF sob demanda com
-`@react-pdf/renderer`, usando `src/components/pdf/ResumeDocument.tsx`. Layout do PDF é pensado pra ser **ATS-friendly**:
-coluna única, sem tabelas, sem texto dentro de imagem, skills/idiomas como texto corrido (não "chips" em `View`s
-separadas), `wrap={false}` em cada seção/entrada pra nunca deixar um título de seção órfão numa quebra de página.
+`/[lang]/resume/pdf` (`runtime = "nodejs"` só vale pro build — em produção é HTML estático, ver seção "Estrutura de
+rotas") gera o PDF com `@react-pdf/renderer`, usando `src/components/pdf/ResumeDocument.tsx`, uma vez por idioma em
+build time (`generateStaticParams`). Layout do PDF é pensado pra ser **ATS-friendly**: coluna única, sem tabelas, sem
+texto dentro de imagem, skills/idiomas como texto corrido (não "chips" em `View`s separadas), `wrap={false}` em cada
+seção/entrada pra nunca deixar um título de seção órfão numa quebra de página.
+
+## SEO e indexação
+
+Todas as peças de SEO derivam de fontes que já existem (`resume.json`, `getPostSlugs()`) — nada de texto/dado
+duplicado só pra metadata.
+
+- **`metadataBase`** — `src/app/layout.tsx` define `https://andreyrosa.dev`; qualquer campo de metadata baseado em URL
+  (canonical, OG image) em qualquer rota pode usar caminho relativo a partir daí.
+- **Canonical + hreflang** — cada `generateMetadata` de página (`[lang]/layout.tsx`, `projects/page.tsx`,
+  `blog/page.tsx`, `resume/page.tsx`, `blog/[slug]/page.tsx`) declara `alternates.canonical` +
+  `alternates.languages`. Em `blog/[slug]`, o hreflang só é declarado se o post tiver uma tradução publicada de
+  verdade (`metadata.translations` no `.mdx`) — mesma fonte que `SetLangAlternate` já usa pro seletor de idioma, pra
+  nunca apontar pra um slug que não existe no outro idioma.
+- **`opengraph-image.tsx`** (`src/app/[lang]/opengraph-image.tsx`) — convenção de arquivo do Next.js, gera a imagem de
+  preview de link (LinkedIn/Slack/WhatsApp) via `ImageResponse` (`next/og`, motor Satori) a partir de
+  `resume.json`. Mesma exceção de paleta do `ResumeDocument.tsx`: `ImageResponse` não lê `globals.css`, então usa hex
+  literal do tema escuro. De propósito sem custom font (fica no sans padrão do Satori) pra não depender de `fetch` de
+  rede durante o build estático.
+- **`sitemap.ts`/`robots.ts`** (raiz de `app/`, não em `[lang]/`) — listam as duas versões de idioma de uma vez, por
+  isso não ficam dentro do segmento `[lang]`. Sob `output: 'export'`, os dois precisam de
+  `export const dynamic = "force-static"` explícito — sem essa linha o `next build` falha (mensagem de erro aponta
+  exatamente pra isso).
+- **JSON-LD `Person`** — `<script type="application/ld+json">` embutido em `[lang]/layout.tsx`, montado a partir de
+  `resume.json` (nome, cargo, resumo, LinkedIn, GitHub, e-mail).
+- **`global-not-found.tsx`** (`src/app/global-not-found.tsx`, com `experimental.globalNotFound: true` em
+  `next.config.ts`) — 404 de qualquer URL que não bate com nenhuma rota, inclusive fora de `/pt/*` e `/en/*`. Um
+  `not-found.tsx` comum não dá porque o layout raiz "de verdade" (`[lang]/layout.tsx`) usa um segmento dinâmico no
+  topo — o `not-found.tsx` que ele herdaria é do layout que já falhou em resolver `lang`, então o próprio Next.js
+  documenta esse convention especial pra esse caso. Por não ter `lang` resolvido, o texto é bilíngue lado a lado (nem
+  todo mundo que cai lá tinha um idioma escolhido) e a página monta seu próprio `<html>/<body>` do zero, sem
+  AuroraBackground/Footer/Taskbar (isso tudo vive em `[lang]/layout.tsx`).
 
 ## Componentes reutilizáveis
 

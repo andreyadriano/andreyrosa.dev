@@ -170,5 +170,9 @@ export async function generateMetadata({
   return {
     title: dict.resumePage.title,
     description: dict.resumePage.subtitle,
+    alternates: {
+      canonical: `/${lang}/resume`,
+      languages: { pt: "/pt/resume", en: "/en/resume" },
+    },
   };
 }

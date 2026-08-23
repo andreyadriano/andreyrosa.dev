@@ -66,9 +66,27 @@ export default async function LangLayout({
     },
   ];
   const fileSystem = buildFileSystem(lang);
+  const person = resume[lang];
+  // JSON-LD Person: ajuda o Google a entender e exibir a página
+  // corretamente (rich result) quando alguém busca o nome — reaproveita os
+  // mesmos dados de @/data/resume.json, sem texto novo pra manter.
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    jobTitle: person.role,
+    description: person.summary,
+    email: `mailto:${person.email}`,
+    url: `https://andreyrosa.dev/${lang}`,
+    sameAs: [`https://${person.linkedin}`, `https://${person.github}`],
+  };
 
   return (
     <LangAlternateProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <AuroraBackgroundCSS />
       <LangSync lang={lang} />
       <TopBar lang={lang} />
@@ -115,6 +133,10 @@ export async function generateMetadata({
   return {
     title: `${name} — ${role}`,
     description: summary,
+    alternates: {
+      canonical: `/${lang}`,
+      languages: { pt: "/pt", en: "/en" },
+    },
   };
 }
 

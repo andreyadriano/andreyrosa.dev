@@ -57,5 +57,9 @@ export async function generateMetadata({
   return {
     title: dict.projectsPage.title,
     description: dict.projectsPage.subtitle,
+    alternates: {
+      canonical: `/${lang}/projects`,
+      languages: { pt: "/pt/projects", en: "/en/projects" },
+    },
   };
 }
