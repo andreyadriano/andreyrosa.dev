@@ -9,6 +9,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary, isValidLocale, locales } from "@/i18n/config";
+// PREVIEW temporário: trocado pra versão em CSS (AuroraBackgroundCSS) só
+// pra comparação visual a pedido do usuário — reverter pra
+// AuroraBackgroundShader (shader WebGL/GLSL, import comentado abaixo) depois.
+// import { AuroraBackgroundShader } from "@/components/AuroraBackgroundShader";
+import { AuroraBackgroundCSS } from "@/components/AuroraBackgroundCSS";
 import { LangAlternateProvider } from "@/components/LangAlternateContext";
 import { LangSync } from "@/components/LangSync";
 import { TopBar } from "@/components/TopBar";
@@ -61,9 +66,28 @@ export default async function LangLayout({
     },
   ];
   const fileSystem = buildFileSystem(lang);
+  const person = resume[lang];
+  // JSON-LD Person: ajuda o Google a entender e exibir a página
+  // corretamente (rich result) quando alguém busca o nome — reaproveita os
+  // mesmos dados de @/data/resume.json, sem texto novo pra manter.
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    jobTitle: person.role,
+    description: person.summary,
+    email: `mailto:${person.email}`,
+    url: `https://andreyrosa.dev/${lang}`,
+    sameAs: [`https://${person.linkedin}`, `https://${person.github}`],
+  };
 
   return (
     <LangAlternateProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <AuroraBackgroundCSS />
       <LangSync lang={lang} />
       <TopBar lang={lang} />
       {children}
@@ -109,6 +133,10 @@ export async function generateMetadata({
   return {
     title: `${name} — ${role}`,
     description: summary,
+    alternates: {
+      canonical: `/${lang}`,
+      languages: { pt: "/pt", en: "/en" },
+    },
   };
 }
 

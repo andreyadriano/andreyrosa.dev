@@ -1,0 +1,4 @@
+# Convenção do Cloudflare Pages: redirect de verdade (HTTP 301) na borda,
+# antes de qualquer HTML ser servido — ver AGENTS.md, seção "Estrutura de
+# rotas", pro porquê disso existir (src/app/page.tsx sozinho não bastava).
+/  /pt  301

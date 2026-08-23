@@ -27,10 +27,7 @@
       "availability": "Open to new opportunities",
       "greeting": "Hi, I'm",
       "subtitle": "Fullstack Software Developer",
-      "ctaProjects": "View projects",
-      "ctaBlog": "Read blog",
       "ctaResume": "Download resume (PDF)",
-      "terminalHint": "psst — there's a working terminal (and a file explorer) tucked in the corner. Try `help`.",
       "terminal": {
         "prompt": "visitor@andrey",
         "command": "whoami",
@@ -101,11 +98,11 @@
   },
   "projectsPage": {
     "title": "Projects",
-    "subtitle": "I still don't have many projects here, and the ones I do are a bit old — most of what I've been working on lately is for my job, so I can't share it here. I plan to bring more over time, whether related to my field or to technology in general."
+    "subtitle": "My personal projects, outside of what I build at work. I add new projects here as they come along, whether in my field or just out of technical curiosity."
   },
   "blogPage": {
     "title": "Blog",
-    "subtitle": "Notes and things I've learned about software development, with the occasional dive into embedded Linux and VoIP.",
+    "subtitle": "Notes and things I've learned about software development, with some experiences in other areas of technology.",
     "back": "← Back to blog"
   },
   "footer": {

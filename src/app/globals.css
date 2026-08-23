@@ -19,15 +19,28 @@
 :root {
   color-scheme: dark;
 
-  /* Superfícies */
-  --bg: #050605;
-  --bg-elevated: #0e0f0e;
-  --surface: rgba(255, 255, 255, 0.02);
-  --surface-hover: rgba(255, 255, 255, 0.04);
+  /* Superfícies — azul-noite bem escuro (não preto puro, não preto
+   * esverdeado): é o céu da aurora boreal por trás de tudo, mesmo fora da
+   * hero. Preenchimentos sólidos e neutros de propósito (nada de overlay
+   * colorido por cima — isso lê como "lavado", não como elevação). Quem
+   * carrega a identidade verde são as bordas abaixo, tingidas com o matiz
+   * de --accent (103 182 103). */
+  --bg: #05060d;
+  --bg-elevated: #0c1020;
+  --surface: #0e1122;
+  --surface-hover: #151a30;
 
   /* Bordas */
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.3);
+  --border: rgba(103, 182, 103, 0.14);
+  --border-strong: rgba(103, 182, 103, 0.38);
+
+  /* Paleta exclusiva da ilustração de aurora boreal (AuroraBackgroundShader) —
+   * sem correspondente semântico no resto do site, por isso tokens à
+   * parte em vez de --accent-2/--warn/etc. */
+  --aurora-sky: #111a35;
+  --aurora-teal: #4fd1c5;
+  --aurora-violet: #8b7cf6;
+  --aurora-pink: #f472b6;
 
   /* Texto */
   --fg: #e6e9e6;
@@ -65,20 +78,37 @@
 :root[data-theme="light"] {
   color-scheme: light;
 
+  /* Mesma lógica do tema escuro: superfícies sólidas/neutras, bordas
+   * tingidas com o matiz do --accent daqui (63 143 82). --surface/--border
+   * um pouco mais fortes que a versão original (0.035/0.16) — contra o céu
+   * azul-claro da aurora de fundo, os cards quase se fundiam com o fundo. */
   --bg: #ffffff;
   --bg-elevated: #f2f4f2;
-  --surface: rgba(10, 12, 10, 0.03);
-  --surface-hover: rgba(10, 12, 10, 0.06);
+  --surface: rgba(10, 12, 10, 0.055);
+  --surface-hover: rgba(10, 12, 10, 0.09);
 
-  --border: rgba(10, 12, 10, 0.1);
-  --border-strong: rgba(10, 12, 10, 0.3);
+  --border: rgba(63, 143, 82, 0.28);
+  --border-strong: rgba(63, 143, 82, 0.5);
+
+  /* No claro a aurora vira nuvem branca (ver AuroraBackgroundShader.tsx,
+   * uIsLight) — --aurora-sky é o tom de céu por trás dela, precisa de
+   * contraste de verdade contra o branco das nuvens pra ser notado num
+   * relance, não só num crop ampliado. Já passou por #eef1fb, #cfe0f5,
+   * #a3c9ef e #5b9bdb (cada vez mais forte, ainda fracos demais) antes de
+   * chegar aqui. */
+  --aurora-sky: #2f7fd1;
+  --aurora-teal: #14b8a6;
+  --aurora-violet: #7c6ff0;
+  --aurora-pink: #ec4899;
 
   --fg: #141815;
   --fg-muted: #5b655d;
   --fg-subtle: #333a34;
 
-  --accent: #3f8f52;
-  --accent-hover: #34793f;
+  /* #3f8f52 (valor original) media 3.99:1 sobre --bg branco — abaixo do
+   * mínimo AA (4.5:1) pra texto normal. Escurecido até 5.02:1, mesmo matiz. */
+  --accent: #377d47;
+  --accent-hover: #2f6b3c;
   --accent-fg: #ffffff;
   --accent-2: #5b6b60;
   --accent-2-hover: #46564b;
@@ -90,6 +120,192 @@
   --danger: #cc3934;
   --danger-hover: #b62f2b;
   --danger-fg: #ffffff;
+}
+
+/* Véu de contraste sobre a aurora (AuroraBackgroundShader.tsx e
+ * AuroraBackgroundCSS.tsx renderizam o mesmo div .aurora-veil, fixed,
+ * atrás do conteúdo — cobre a tela inteira em altura, em qualquer altura
+ * de scroll, não só o hero). Largura travada em 72rem (1152px, o mesmo
+ * valor de max-w-6xl que todo container de conteúdo do site usa — TopBar,
+ * hero, Sobre mim, Projetos, Blog, Footer, ver grep por "max-w-6xl" se
+ * esse valor mudar num desses) e centralizada com left:50%+translateX,
+ * já que `fixed` tira o elemento do fluxo normal (mx-auto sozinho não
+ * centralizaria). Antes disso o véu cobria a viewport inteira com um
+ * gradiente simulando "esmaece nas bordas, onde não tem texto" — só uma
+ * aproximação, considerando que o conteúdo real É uma coluna central de
+ * largura fixa; travar a largura de verdade no valor real elimina a
+ * aproximação, mas trocar o gradiente por um corte seco criava uma
+ * costura reta bem visível em telas largas (a "tarja colada por trás da
+ * página", nada parecido com vidro). Uma segunda tentativa esmaeceu os
+ * ~12% finais DENTRO dos próprios 72rem — errado no sentido oposto: isso
+ * comia contraste bem onde ainda tem conteúdo de verdade (o padding do
+ * container é só 1.5rem, não 12% de 1152px), então o esmaecimento caía
+ * em cima de texto/cards em vez de só na margem vazia.
+ *
+ * A versão certa: o véu fica MAIOR que os 72rem de conteúdo (72rem + 8rem
+ * de sobra de cada lado), e o mask-image usa unidades absolutas (rem, não
+ * %) pra garantir que o platô 100% opaco comece e termine exatamente nos
+ * 72rem centrais — a faixa de esmaecimento inteira mora nos 8rem extras
+ * de cada lado, que são território garantidamente vazio (fora da div de
+ * conteúdo), nunca por cima de texto. Só a partir do `md` (768px, mesmo
+ * breakpoint do resto do site) — abaixo disso o véu fica só 100% da
+ * viewport, sem mask nenhuma: não tem sobra lateral pra esmaecer, e o
+ * texto pode chegar perto da borda de verdade da tela.
+ *
+ * Tema escuro (padrão abaixo): tinta preta — escurece a aurora por trás
+ * pra dar contraste ao texto claro.
+ *
+ * Tema claro: NÃO é a mesma tinta em branco. Um filtro escuro sobre um
+ * tema que é pra passar sensação de luz do dia lê como contraditório (uma
+ * tentativa anterior com painel opaco atrás do texto foi rejeitada por
+ * esse motivo; uma tentativa com tinta de --bg a 78% — o mesmo pico do
+ * tema escuro, só trocando preto por branco — foi rejeitada por ficar
+ * "névoa" em vez de vidro, lavando demais a cor do céu; uma tentativa
+ * mais fraca, 38%/blur 28px, foi rejeitada no sentido oposto, "nem parece
+ * existir" — borrar uma imagem de nuvens, que já é naturalmente suave,
+ * quase não muda a percepção; a presença de "vidro" depende do blur ser
+ * forte o bastante pra ficar óbvio contra o resto da cena, não só da
+ * tinta). Tinta em 55%, blur em 44px, + saturate() pra manter a cor do
+ * céu viva com presença visual real. Ainda não garante 4.5:1 sozinho no
+ * pior caso (frame de céu limpo) — quem cobre essa lacuna é o text-shadow
+ * em .hero-title/.hero-subtitle logo abaixo, um halo claro grudado nas
+ * letras. Feito em CSS puro (seletor de atributo), não como className
+ * calculada em JS a partir do tema — o componente é client-only mas
+ * ainda passa por SSR, então uma className dependente de
+ * `document.documentElement` no primeiro render do cliente divergiria do
+ * HTML gerado no servidor e dispararia erro de hydration mismatch. */
+.aurora-veil {
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.78);
+}
+:root[data-theme="light"] .aurora-veil {
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  backdrop-filter: blur(44px) saturate(160%);
+  -webkit-backdrop-filter: blur(44px) saturate(160%);
+}
+@media (min-width: 768px) {
+  .aurora-veil {
+    /* 72rem de conteúdo + 8rem de esmaecimento de cada lado. Maior que a
+     * viewport em telas médias (768-1152px, onde não sobra margem
+     * nenhuma) não é problema — o excesso só fica fora da tela, e a parte
+     * visível continua 100% platô, sem esmaecimento nenhum, exatamente
+     * como deveria ser sem margem pra esmaecer. */
+    width: calc(72rem + 16rem);
+    /* Curva em S (aproximação de smoothstep) em vez de poucos degraus —
+     * acelera devagar, cruza o meio rápido, desacelera devagar de novo,
+     * em vez de uma rampa quase linear com uma quina perto do início. */
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      rgba(0, 0, 0, 0.06) 1.2rem,
+      rgba(0, 0, 0, 0.22) 2.4rem,
+      rgba(0, 0, 0, 0.5) 4rem,
+      rgba(0, 0, 0, 0.78) 5.6rem,
+      rgba(0, 0, 0, 0.94) 6.8rem,
+      black 8rem,
+      black calc(100% - 8rem),
+      rgba(0, 0, 0, 0.94) calc(100% - 6.8rem),
+      rgba(0, 0, 0, 0.78) calc(100% - 5.6rem),
+      rgba(0, 0, 0, 0.5) calc(100% - 4rem),
+      rgba(0, 0, 0, 0.22) calc(100% - 2.4rem),
+      rgba(0, 0, 0, 0.06) calc(100% - 1.2rem),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      rgba(0, 0, 0, 0.06) 1.2rem,
+      rgba(0, 0, 0, 0.22) 2.4rem,
+      rgba(0, 0, 0, 0.5) 4rem,
+      rgba(0, 0, 0, 0.78) 5.6rem,
+      rgba(0, 0, 0, 0.94) 6.8rem,
+      black 8rem,
+      black calc(100% - 8rem),
+      rgba(0, 0, 0, 0.94) calc(100% - 6.8rem),
+      rgba(0, 0, 0, 0.78) calc(100% - 5.6rem),
+      rgba(0, 0, 0, 0.5) calc(100% - 4rem),
+      rgba(0, 0, 0, 0.22) calc(100% - 2.4rem),
+      rgba(0, 0, 0, 0.06) calc(100% - 1.2rem),
+      transparent 100%
+    );
+  }
+}
+
+/* page.tsx: reforço de contraste nas letras do nome/subtítulo do hero —
+ * só no tema claro, rede de segurança pro véu acima (que garante
+ * contraste sozinho na maioria dos frames, mas fica mais justo em frames
+ * de céu bem limpo). Raio pequeno e opacidade baixa de propósito — um
+ * text-shadow com blur grande vira "brilho"/halo, que lê como datado e
+ * amolece a borda de uma fonte mono de traço fino; isso aqui é só o
+ * suficiente pra endurecer a borda da letra, não um efeito visível por
+ * si só. */
+:root[data-theme="light"] .hero-title {
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--bg) 65%, transparent);
+}
+:root[data-theme="light"] .hero-subtitle {
+  text-shadow: 0 1px 1.5px color-mix(in srgb, var(--bg) 75%, transparent);
+}
+
+/* AuroraBackgroundCSS.tsx: versão sem canvas/WebGL do fundo de aurora —
+ * fotos (frames reais, capturados do próprio shader de
+ * AuroraBackgroundShader.tsx via screenshot em pontos diferentes da animação,
+ * não uma recriação desenhada à mão — uma primeira tentativa em
+ * gradiente/blob destoava demais do original) alternadas em crossfade por
+ * CSS puro. Composição feita pela GPU (opacity é uma propriedade
+ * "barata" de animar, só compositing, sem recalcular pixel nenhum) —
+ * ainda ordens de magnitude mais barato que o shader por pixel, mesmo
+ * animando.
+ *
+ * Cada grupo de tema (--dark/--light) empilha os 4 frames absolutamente
+ * posicionados; .aurora-static-frame roda a mesma @keyframes em todos,
+ * só com animation-delay escalonado por frame (ver --frame-delay,
+ * calculado em AuroraBackgroundCSS.tsx) — um único frame visível de
+ * cada vez, revezando em loop. O grupo do tema inativo continua animando
+ * escondido (opacity do grupo, não dele) — custo desprezível, evita
+ * reiniciar/perder sincronismo do ciclo ao trocar de tema. */
+.aurora-static-group--light {
+  opacity: 0;
+}
+:root[data-theme="light"] .aurora-static-group--dark {
+  opacity: 0;
+}
+:root[data-theme="light"] .aurora-static-group--light {
+  opacity: 1;
+}
+
+.aurora-static-frame {
+  object-fit: cover;
+  object-position: center top;
+  animation: aurora-crossfade var(--aurora-cycle, 16s) ease-in-out infinite;
+  animation-delay: var(--frame-delay, 0s);
+}
+
+/* Onda triangular, sem patamar de opacidade 1 parada: cada frame só passa
+ * por um instante no pico (25% do PRÓPRIO ciclo) antes de já começar a
+ * esvanecer de novo — com os 4 frames de um grupo escalonados em N-avos
+ * do ciclo (--frame-delay, calculado em frameDelay() em
+ * AuroraBackgroundCSS.tsx), sempre tem dois frames se misturando ao
+ * mesmo tempo, então a cena nunca fica de fato parada (era esse o
+ * problema da versão anterior, com um "hold" — a maior parte do ciclo
+ * ficava sem nenhuma transição rolando). O fade-out de um frame (25% a
+ * 50% do próprio ciclo) coincide em tempo real com o fade-in do próximo
+ * (0% a 25% do dele) pelo mesmo motivo da versão anterior: o delay do
+ * próximo é exatamente 1/4 de ciclo maior. */
+@keyframes aurora-crossfade {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @theme inline {
@@ -136,6 +352,7 @@ body {
     transform: scaleY(1);
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   *,

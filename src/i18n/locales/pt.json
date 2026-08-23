@@ -27,10 +27,7 @@
       "availability": "Disponível para novas oportunidades",
       "greeting": "Olá, eu sou",
       "subtitle": "Desenvolvedor de software fullstack",
-      "ctaProjects": "Ver projetos",
-      "ctaBlog": "Ler blog",
       "ctaResume": "Baixar currículo (PDF)",
-      "terminalHint": "psst — tem um terminal (e um explorador de arquivos) funcionais no canto da tela. Dá um `help`.",
       "terminal": {
         "prompt": "visitante@andrey",
         "command": "whoami",
@@ -101,11 +98,11 @@
   },
   "projectsPage": {
     "title": "Projetos",
-    "subtitle": "Ainda tenho poucos projetos por aqui, e os que tem são mais antigos — boa parte do que venho me dedicando ultimamente é trabalho, então não posso mostrar aqui. Pretendo trazer mais coisas ao longo do tempo, seja da minha área de atuação ou de tecnologia em geral."
+    "subtitle": "Meus projetos pessoais, fora do que desenvolvo no trabalho. Vou adicionando aqui os projetos novos que forem surgindo, seja da minha área ou só por curiosidade técnica."
   },
   "blogPage": {
     "title": "Blog",
-    "subtitle": "Anotações e aprendizados sobre desenvolvimento de software, com alguns mergulhos em Linux embarcado e VoIP.",
+    "subtitle": "Anotações e aprendizados sobre desenvolvimento de software, com algumas experiências em outras áreas da tecnologia.",
     "back": "← Voltar ao blog"
   },
   "footer": {
