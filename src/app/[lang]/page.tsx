@@ -44,7 +44,7 @@ export default async function HomePage({ params }: HomePageProps) {
     <main className="text-fg min-h-screen selection:bg-accent/30">
       {/* HERO */}
       <section className="border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 min-h-[85vh] flex flex-col items-center justify-center text-center">
+        <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 min-h-[60vh] md:min-h-[85vh] flex flex-col items-center justify-center text-center">
           <h1 className="hero-title font-mono text-[clamp(1.75rem,5vw+0.5rem,4rem)] font-medium leading-[1.05] tracking-tight text-accent text-balance">
             Andrey Adriano da Rosa
           </h1>

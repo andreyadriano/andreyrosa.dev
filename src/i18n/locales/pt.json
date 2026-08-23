@@ -98,11 +98,11 @@
   },
   "projectsPage": {
     "title": "Projetos",
-    "subtitle": "Projetos pessoais e acadêmicos, fora do que desenvolvo profissionalmente na Intelbras. A lista cresce aos poucos — entra o que eu tiro do forno, seja da minha área ou só por curiosidade técnica."
+    "subtitle": "Meus projetos pessoais, fora do que desenvolvo no trabalho. Vou adicionando aqui os projetos novos que forem surgindo, seja da minha área ou só por curiosidade técnica."
   },
   "blogPage": {
     "title": "Blog",
-    "subtitle": "Anotações e aprendizados sobre desenvolvimento de software, com alguns mergulhos em Linux embarcado e VoIP.",
+    "subtitle": "Anotações e aprendizados sobre desenvolvimento de software, com algumas experiências em outras áreas da tecnologia.",
     "back": "← Voltar ao blog"
   },
   "footer": {

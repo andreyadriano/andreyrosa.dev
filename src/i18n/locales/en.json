@@ -98,11 +98,11 @@
   },
   "projectsPage": {
     "title": "Projects",
-    "subtitle": "Personal and academic projects, outside of what I build professionally at Intelbras. The list grows slowly — whatever I ship lands here, whether it's in my field or just technical curiosity."
+    "subtitle": "My personal projects, outside of what I build at work. I add new projects here as they come along, whether in my field or just out of technical curiosity."
   },
   "blogPage": {
     "title": "Blog",
-    "subtitle": "Notes and things I've learned about software development, with the occasional dive into embedded Linux and VoIP.",
+    "subtitle": "Notes and things I've learned about software development, with some experiences in other areas of technology.",
     "back": "← Back to blog"
   },
   "footer": {
