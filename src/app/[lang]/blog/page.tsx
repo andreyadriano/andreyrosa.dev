@@ -2,7 +2,9 @@
 //
 // Listagem completa de posts, lidos de src/content/blog/{lang}/*.mdx via
 // @/lib/blog (ver ali o porquê de não usar CMS/banco de dados). Reaproveita
-// o mesmo PostCard usado na seção "Últimos posts" da home.
+// o mesmo PostCard usado na seção "Últimos posts" da home. Sem min-h-screen
+// no <main> de propósito — com poucos posts, isso deixava um vazio grande
+// entre os cards e o rodapé.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -21,7 +23,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const posts = await getAllPosts(lang);
 
   return (
-    <main className="text-fg min-h-screen">
+    <main className="text-fg">
       <section className="max-w-6xl mx-auto px-6 py-20">
         <Link
           href={`/${lang}`}

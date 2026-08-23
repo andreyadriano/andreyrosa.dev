@@ -27,8 +27,6 @@
       "availability": "Open to new opportunities",
       "greeting": "Hi, I'm",
       "subtitle": "Fullstack Software Developer",
-      "ctaProjects": "View projects",
-      "ctaBlog": "Read blog",
       "ctaResume": "Download resume (PDF)",
       "terminal": {
         "prompt": "visitor@andrey",
@@ -100,7 +98,7 @@
   },
   "projectsPage": {
     "title": "Projects",
-    "subtitle": "I still don't have many projects here, and the ones I do are a bit old — most of what I've been working on lately is for my job, so I can't share it here. I plan to bring more over time, whether related to my field or to technology in general."
+    "subtitle": "Personal and academic projects, outside of what I build professionally at Intelbras. The list grows slowly — whatever I ship lands here, whether it's in my field or just technical curiosity."
   },
   "blogPage": {
     "title": "Blog",

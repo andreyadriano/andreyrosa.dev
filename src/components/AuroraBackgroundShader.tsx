@@ -404,33 +404,11 @@ export function AuroraBackgroundShader() {
           <canvas ref={canvasRef} className="h-full w-full" />
         </div>
       </div>
-      {/* Véu escuro sobre a aurora — só existe pra dar contraste de texto
-          contra o shader, então some junto com ele no tema claro (classe
-          `aurora-veil`, escondida via CSS em globals.css — senão é só um
-          filtro cinza sobre o branco). No mobile o conteúdo usa a largura
-          quase inteira da tela (título quebra em duas linhas encostando
-          nas bordas), então o véu ali é sólido, cobrindo 100% da largura —
-          sem o esmaecimento lateral, que deixaria as bordas mais claras
-          bem onde o texto pode chegar. Esmaecimento lateral (60vw centrais
-          cravados + 20vw de cada lado esvanecendo) só a partir do `md`,
-          onde o conteúdo já fica centralizado com folga das bordas. */}
-      <div className="aurora-veil pointer-events-none fixed inset-0 -z-[9] bg-black/78 md:hidden" aria-hidden="true" />
-      <div
-        className="aurora-veil pointer-events-none fixed inset-0 -z-[9] hidden md:block"
-        style={{
-          background:
-            "linear-gradient(to right, " +
-            "transparent 0%, " +
-            "rgba(0, 0, 0, 0.2) 5%, " +
-            "rgba(0, 0, 0, 0.5) 12.5%, " +
-            "rgba(0, 0, 0, 0.78) 25%, " + // estabiliza
-            "rgba(0, 0, 0, 0.78) 75%, " + // começa a esvanecer
-            "rgba(0, 0, 0, 0.5) 87.5%, " +
-            "rgba(0, 0, 0, 0.2) 95%, " +
-            "transparent 100%)",
-        }}
-        aria-hidden="true"
-      />
+      {/* Véu de contraste sobre a aurora — dark: tinta preta; light: difusão
+          clara (blur + --bg) — ver .aurora-veil em globals.css. Largura
+          travada em max-w-6xl (a mesma da div de conteúdo real), não a
+          viewport inteira: os dois espaços laterais nunca têm conteúdo. */}
+      <div className="aurora-veil pointer-events-none fixed inset-y-0 -z-[9]" aria-hidden="true" />
     </>
   );
 }

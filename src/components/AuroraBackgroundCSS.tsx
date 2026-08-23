@@ -52,24 +52,8 @@ export function AuroraBackgroundCSS() {
         <AuroraFrames theme="dark" />
         <AuroraFrames theme="light" />
       </div>
-      {/* Véu de contraste — mesmas classes/regras aurora-veil de globals.css usadas pelo shader. */}
-      <div className="aurora-veil pointer-events-none fixed inset-0 -z-[9] bg-black/78 md:hidden" aria-hidden="true" />
-      <div
-        className="aurora-veil pointer-events-none fixed inset-0 -z-[9] hidden md:block"
-        style={{
-          background:
-            "linear-gradient(to right, " +
-            "transparent 0%, " +
-            "rgba(0, 0, 0, 0.2) 5%, " +
-            "rgba(0, 0, 0, 0.5) 12.5%, " +
-            "rgba(0, 0, 0, 0.78) 25%, " +
-            "rgba(0, 0, 0, 0.78) 75%, " +
-            "rgba(0, 0, 0, 0.5) 87.5%, " +
-            "rgba(0, 0, 0, 0.2) 95%, " +
-            "transparent 100%)",
-        }}
-        aria-hidden="true"
-      />
+      {/* Véu de contraste — mesma classe/regra .aurora-veil de globals.css usada pelo shader. */}
+      <div className="aurora-veil pointer-events-none fixed inset-y-0 -z-[9]" aria-hidden="true" />
     </>
   );
 }

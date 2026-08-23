@@ -45,11 +45,11 @@ export default async function HomePage({ params }: HomePageProps) {
       {/* HERO */}
       <section className="border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 min-h-[85vh] flex flex-col items-center justify-center text-center">
-          <h1 className="font-mono text-[clamp(1.75rem,5vw+0.5rem,4rem)] font-medium leading-[1.05] tracking-tight text-accent">
+          <h1 className="hero-title font-mono text-[clamp(1.75rem,5vw+0.5rem,4rem)] font-medium leading-[1.05] tracking-tight text-accent text-balance">
             Andrey Adriano da Rosa
           </h1>
 
-          <h2 className="mt-4 text-lg md:text-2xl font-normal text-fg-muted max-w-xl">
+          <h2 className="hero-subtitle mt-4 text-lg md:text-2xl font-normal text-fg-muted max-w-xl">
             {dict.home.hero.subtitle}
           </h2>
 

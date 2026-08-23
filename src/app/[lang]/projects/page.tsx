@@ -2,7 +2,8 @@
 //
 // Listagem completa de projetos. Reaproveita o mesmo ProjectCard e os
 // mesmos dados mockados (@/data/projects) usados na seção "Projetos em
-// destaque" da home.
+// destaque" da home. Sem min-h-screen no <main> de propósito — com poucos
+// projetos, isso deixava um vazio grande entre os cards e o rodapé.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -21,7 +22,7 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
   const projects = projectsByLang[lang];
 
   return (
-    <main className="text-fg min-h-screen">
+    <main className="text-fg">
       <section className="max-w-6xl mx-auto px-6 py-20">
         <Link
           href={`/${lang}`}
