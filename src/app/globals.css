@@ -34,7 +34,7 @@
   --border: rgba(103, 182, 103, 0.14);
   --border-strong: rgba(103, 182, 103, 0.38);
 
-  /* Paleta exclusiva da ilustração de aurora boreal (AuroraBackground) —
+  /* Paleta exclusiva da ilustração de aurora boreal (AuroraBackgroundShader) —
    * sem correspondente semântico no resto do site, por isso tokens à
    * parte em vez de --accent-2/--warn/etc. */
   --aurora-sky: #111a35;
@@ -88,7 +88,7 @@
   --border: rgba(63, 143, 82, 0.16);
   --border-strong: rgba(63, 143, 82, 0.4);
 
-  /* No claro a aurora vira nuvem branca (ver AuroraBackground.tsx,
+  /* No claro a aurora vira nuvem branca (ver AuroraBackgroundShader.tsx,
    * uIsLight) — --aurora-sky é o tom de céu por trás dela, precisa de
    * contraste de verdade contra o branco das nuvens pra ser notado num
    * relance, não só num crop ampliado. Já passou por #eef1fb, #cfe0f5,
@@ -118,8 +118,8 @@
   --danger-fg: #ffffff;
 }
 
-/* AuroraBackground (src/components/AuroraBackground.tsx): o véu escuro de
- * contraste do texto (não o shader em si, que já reage ao tema via uniform
+/* AuroraBackgroundShader.tsx: o véu escuro de contraste do texto (não o
+ * shader em si, que já reage ao tema via uniform
  * — ver uIsLight no componente) some no tema claro, onde o céu já é claro
  * e não precisa dele. Feito em CSS puro (seletor de atributo), não como
  * className calculada em JS a partir do tema — o componente é client-only
@@ -128,6 +128,66 @@
  * HTML gerado no servidor e dispararia erro de hydration mismatch. */
 :root[data-theme="light"] .aurora-veil {
   display: none;
+}
+
+/* AuroraBackgroundCSS.tsx: versão sem canvas/WebGL do fundo de aurora —
+ * fotos (frames reais, capturados do próprio shader de
+ * AuroraBackgroundShader.tsx via screenshot em pontos diferentes da animação,
+ * não uma recriação desenhada à mão — uma primeira tentativa em
+ * gradiente/blob destoava demais do original) alternadas em crossfade por
+ * CSS puro. Composição feita pela GPU (opacity é uma propriedade
+ * "barata" de animar, só compositing, sem recalcular pixel nenhum) —
+ * ainda ordens de magnitude mais barato que o shader por pixel, mesmo
+ * animando.
+ *
+ * Cada grupo de tema (--dark/--light) empilha os 4 frames absolutamente
+ * posicionados; .aurora-static-frame roda a mesma @keyframes em todos,
+ * só com animation-delay escalonado por frame (ver --frame-delay,
+ * calculado em AuroraBackgroundCSS.tsx) — um único frame visível de
+ * cada vez, revezando em loop. O grupo do tema inativo continua animando
+ * escondido (opacity do grupo, não dele) — custo desprezível, evita
+ * reiniciar/perder sincronismo do ciclo ao trocar de tema. */
+.aurora-static-group--light {
+  opacity: 0;
+}
+:root[data-theme="light"] .aurora-static-group--dark {
+  opacity: 0;
+}
+:root[data-theme="light"] .aurora-static-group--light {
+  opacity: 1;
+}
+
+.aurora-static-frame {
+  object-fit: cover;
+  object-position: center top;
+  animation: aurora-crossfade var(--aurora-cycle, 16s) ease-in-out infinite;
+  animation-delay: var(--frame-delay, 0s);
+}
+
+/* Onda triangular, sem patamar de opacidade 1 parada: cada frame só passa
+ * por um instante no pico (25% do PRÓPRIO ciclo) antes de já começar a
+ * esvanecer de novo — com os 4 frames de um grupo escalonados em N-avos
+ * do ciclo (--frame-delay, calculado em frameDelay() em
+ * AuroraBackgroundCSS.tsx), sempre tem dois frames se misturando ao
+ * mesmo tempo, então a cena nunca fica de fato parada (era esse o
+ * problema da versão anterior, com um "hold" — a maior parte do ciclo
+ * ficava sem nenhuma transição rolando). O fade-out de um frame (25% a
+ * 50% do próprio ciclo) coincide em tempo real com o fade-in do próximo
+ * (0% a 25% do dele) pelo mesmo motivo da versão anterior: o delay do
+ * próximo é exatamente 1/4 de ciclo maior. */
+@keyframes aurora-crossfade {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @theme inline {
@@ -174,6 +234,7 @@ body {
     transform: scaleY(1);
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   *,

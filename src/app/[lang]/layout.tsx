@@ -9,7 +9,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary, isValidLocale, locales } from "@/i18n/config";
-import { AuroraBackground } from "@/components/AuroraBackground";
+// PREVIEW temporário: trocado pra versão em CSS (AuroraBackgroundCSS) só
+// pra comparação visual a pedido do usuário — reverter pra
+// AuroraBackgroundShader (shader WebGL/GLSL, import comentado abaixo) depois.
+// import { AuroraBackgroundShader } from "@/components/AuroraBackgroundShader";
+import { AuroraBackgroundCSS } from "@/components/AuroraBackgroundCSS";
 import { LangAlternateProvider } from "@/components/LangAlternateContext";
 import { LangSync } from "@/components/LangSync";
 import { TopBar } from "@/components/TopBar";
@@ -65,7 +69,7 @@ export default async function LangLayout({
 
   return (
     <LangAlternateProvider>
-      <AuroraBackground />
+      <AuroraBackgroundCSS />
       <LangSync lang={lang} />
       <TopBar lang={lang} />
       {children}

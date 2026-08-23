@@ -12,7 +12,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Download, Terminal as TerminalIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Reveal } from "@/components/Reveal";
 import { ProjectCard } from "@/components/ProjectCard";
@@ -76,11 +76,6 @@ export default async function HomePage({ params }: HomePageProps) {
               </a>
             ))}
           </div>
-
-          <p className="mt-6 flex items-center justify-center gap-2 font-mono text-xs text-fg-muted/80">
-            <TerminalIcon size={14} strokeWidth={1.75} className="shrink-0 text-accent-2" />
-            {dict.home.hero.terminalHint}
-          </p>
         </div>
       </section>
 
@@ -100,7 +95,7 @@ export default async function HomePage({ params }: HomePageProps) {
                 alt="Andrey Adriano da Rosa"
                 width={400}
                 height={400}
-                className="h-auto w-full rounded-full ring-2 ring-accent/60 ring-offset-4 ring-offset-bg"
+                className="h-auto w-full rounded-full ring-2 ring-accent/60"
               />
             </div>
           </div>

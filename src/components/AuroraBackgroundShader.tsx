@@ -1,7 +1,10 @@
-// src/components/AuroraBackground.tsx
+// src/components/AuroraBackgroundShader.tsx
 //
-// Fundo de aurora boreal — shader WebGL real (calculado por pixel, na
-// GPU, a cada frame), não formas SVG estáticas. As funções aurora() /
+// Fundo de aurora boreal — shader WebGL/GLSL real (calculado por pixel, na
+// GPU, a cada frame), não formas SVG estáticas. Nome distingue de
+// AuroraBackgroundCSS.tsx, a versão sem shader (frames pré-renderizados +
+// crossfade em CSS puro) — ver o comentário de topo lá pro porquê das duas
+// existirem lado a lado. As funções aurora() /
 // fbmAurora() / stars() abaixo são um port quase literal de um shader de
 // referência (domain warping com ruído triangular tri()/tri2() e
 // acumulação de 50 camadas com paleta de cor cíclica, técnica de Inigo
@@ -281,7 +284,7 @@ function readIsLight(): boolean {
   return document.documentElement.getAttribute("data-theme") === "light";
 }
 
-export function AuroraBackground() {
+export function AuroraBackgroundShader() {
   const layerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
