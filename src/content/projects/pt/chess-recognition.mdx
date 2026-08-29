@@ -1,0 +1,41 @@
+Tabuleiros eletrônicos capazes de registrar uma partida de xadrez automaticamente existem, mas custam caro: no
+Brasil, o modelo mais barato passa de R$ 4.000. Meu TCC de Engenharia de Telecomunicações no IFSC nasceu dessa
+lacuna: dava pra chegar a um resultado parecido usando só a câmera de um celular, visão computacional e uma rede
+neural treinada pra reconhecer peças de xadrez?
+
+## O objetivo
+
+A ideia original era um aplicativo de celular completo, filmando a partida em tempo real. Depois de esbarrar na
+complexidade de fazer isso funcionar de forma confiável, reduzi o escopo pra uma prova de conceito mais direta: dada
+uma sequência de fotos do tabuleiro, uma a cada lance, o sistema devolve a partida inteira em notação algébrica, a
+mesma que aparece em livros e sites de xadrez (`1. e4 e5 2. Nf3 Nc6 ...`).
+
+## Como funciona
+
+Cada lance é tratado como uma comparação entre dois estados do tabuleiro, antes e depois. Pra cada foto, o sistema
+localiza o tabuleiro e mapeia suas 64 casas, usa um modelo YOLOv11 (treinado num conjunto de imagens que anotei eu
+mesmo) pra detectar a posição de cada peça, e compara esse estado com o da foto anterior pra descobrir qual lance
+liga um ao outro. A biblioteca `python-chess` testa os lances legais possíveis até achar o que bate exatamente com o
+novo estado. Isso também funciona como validação: se a posição detectada não corresponde a nenhum lance legal, é
+sinal de erro do modelo, e o sistema pede uma nova foto em vez de reportar um lance incorreto.
+
+![Peças de xadrez detectadas pelo modelo YOLOv11, com caixa delimitadora, classe e confiança sobre cada peça](/images/projects/chess-recognition-detection.webp)
+
+Ao final da partida, todos os lances são concatenados num relatório único:
+
+![Relatório de uma partida completa gerado pelo algoritmo, em notação algébrica de xadrez, do lance 1 ao xeque-mate](/images/projects/chess-recognition-report.webp)
+
+## Resultado
+
+O modelo atingiu 99,1% de mAP no conjunto de teste, mas com uma ressalva importante: todo o conjunto de dados foi
+capturado com um único tabuleiro físico, sob as mesmas condições de luz e câmera. Generalizar pra qualquer tabuleiro
+exigiria um conjunto de dados bem mais diverso.
+
+## O que ficou de fora
+
+O projeto continua sendo uma prova de conceito, não um produto: funciona com fotos tiradas manualmente entre lances,
+não com vídeo contínuo, e assume que a câmera está posicionada num ângulo próximo de 90° em relação ao tabuleiro.
+Virar isso num aplicativo de verdade significaria resolver detecção em tempo real e tolerância a ângulos de câmera
+bem mais variados.
+
+O código completo está no repositório linkado abaixo, junto com o TCC na íntegra.

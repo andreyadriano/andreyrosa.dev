@@ -4,6 +4,7 @@
 // Markdown/MDX para componentes estilizados com os tokens do site, em vez
 // de depender do plugin de tipografia do Tailwind (não instalado).
 
+import { isValidElement } from "react";
 import type { MDXComponents } from "mdx/types";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -20,9 +21,21 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {...props}
       />
     ),
-    p: (props) => (
-      <p className="text-fg-subtle leading-relaxed mb-5" {...props} />
-    ),
+    // MDX sempre envolve uma imagem solo (![]()) num <p> — <figure> (bloco)
+    // dentro de <p> é HTML inválido e quebra a hidratação. Quando o único
+    // filho do parágrafo é uma imagem, renderiza como <figure> em vez de
+    // <p> (o componente `img` abaixo assume que nunca fica dentro de um
+    // <p> de verdade).
+    p: ({ children, ...props }) => {
+      if (isValidElement(children) && (children.props as { src?: string })?.src) {
+        return <>{children}</>;
+      }
+      return (
+        <p className="text-fg-subtle leading-relaxed mb-5" {...props}>
+          {children}
+        </p>
+      );
+    },
     a: (props) => (
       <a
         className="text-accent-2 hover:text-accent-2-hover underline underline-offset-4 decoration-accent-2/40 transition-colors"
@@ -65,6 +78,25 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       />
     ),
     hr: () => <hr className="border-border my-10" />,
+    // markdown ![]() não carrega largura/altura, então next/image (que
+    // exige as duas ou fill) não serve aqui; unoptimized:true no
+    // next.config.ts (export estático) já tira o ganho de otimização que
+    // seria o motivo de usá-lo. alt vem sempre do próprio ![alt](src) do
+    // markdown, só o eslint não consegue provar isso estaticamente.
+    img: (props) => (
+      <figure className="my-6">
+        {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+        <img
+          className="w-full h-auto rounded-lg border border-border"
+          {...props}
+        />
+        {props.alt && (
+          <figcaption className="mt-2 font-mono text-xs text-fg-muted text-center">
+            {props.alt}
+          </figcaption>
+        )}
+      </figure>
+    ),
     ...components,
   };
 }

@@ -98,7 +98,9 @@
   },
   "projectsPage": {
     "title": "Projetos",
-    "subtitle": "Meus projetos pessoais, fora do que desenvolvo no trabalho. Vou adicionando aqui os projetos novos que forem surgindo, seja da minha área ou só por curiosidade técnica."
+    "subtitle": "Meus projetos pessoais, fora do que desenvolvo no trabalho. Vou adicionando aqui os projetos novos que forem surgindo, seja da minha área ou só por curiosidade técnica.",
+    "back": "← Voltar aos projetos",
+    "caseStudy": "Sobre"
   },
   "blogPage": {
     "title": "Blog",

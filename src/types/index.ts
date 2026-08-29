@@ -38,6 +38,10 @@ export interface ProjectLink {
 }
 
 export interface Project {
+  // Identifica o projeto entre os dois idiomas (mesmo slug em pt e en) e
+  // aponta pro estudo de caso opcional em
+  // src/content/projects/{lang}/{slug}.mdx — ver src/lib/projects.ts.
+  slug: string;
   title: string;
   description: string;
   tags: string[];

@@ -2,13 +2,9 @@
 
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read
-the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next`
-package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
-This block is written and re-added by `next dev` — verify at
-`node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted
-change; committing it with your work keeps the tree clean.
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
 
@@ -78,10 +74,27 @@ pro padrão) — sem isso, trocar de idioma num post gera 404.
 ## Conteúdo: projetos
 
 `src/data/projects.ts` — `Record<Lang, Project[]>` estático (mock data, não vem de arquivo/CMS). Cada `Project` tem
-`date` e `featured: boolean`. `getFeaturedProjects(lang, limit)` filtra `featured`, ordena por `date` desc e corta — é
-isso que a home usa pra "Projetos em destaque". `/projects` lista o array inteiro sem filtro. Ver README.md pra
-instruções de uso; a regra de arquitetura é: **nunca hardcode a seleção de "quais projetos aparecem na home"** — sempre
-via `getFeaturedProjects`.
+`slug` (mesmo valor em pt e en — é o mesmo projeto, só o texto muda), `date` e `featured: boolean`.
+`getFeaturedProjects(lang, limit)` filtra `featured`, ordena por `date` desc e corta — é isso que a home usa pra
+"Projetos em destaque". `/projects` lista o array inteiro sem filtro. Ver README.md pra instruções de uso; a regra de
+arquitetura é: **nunca hardcode a seleção de "quais projetos aparecem na home"** — sempre via `getFeaturedProjects`.
+
+**Estudo de caso opcional por projeto** (`/[lang]/projects/[slug]`, `src/app/[lang]/projects/[slug]/page.tsx`) —
+mesmo mecanismo de import dinâmico do blog, mas mais simples: o `.mdx` em `src/content/projects/{lang}/{slug}.mdx`
+é só o corpo do texto, sem `export const metadata` (título/tags/links/capa já vêm do `Project` correspondente em
+`data/projects.ts`, encontrado pelo mesmo `slug`). `src/lib/projects.ts` espelha `src/lib/blog.ts`
+(`hasCaseStudy`/`getCaseStudySlugs`/`getCaseStudyReadingTime`, tudo `fs`-based). Pra adicionar um estudo de caso:
+crie o `.mdx` com o `slug` já cadastrado — nenhum código muda, e o link "Estudo de caso" aparece sozinho no
+`ProjectCard` (`hasCaseStudy` checado ali). Como é opcional por idioma, um projeto pode ter estudo de caso só em
+pt (ou só em en) sem quebrar nada — a página só existe pros pares `(lang, slug)` onde o arquivo existe de verdade
+(`generateStaticParams`), e o hreflang da outra versão só é declarado se ela também existir (mesma regra que
+`blog/[slug]` já usa pra não apontar pra um slug que não existe no outro idioma).
+
+**Cuidado ao adicionar imagens dentro de um `.mdx`** (`![alt](...)`) — MDX sempre embrulha uma imagem solo num
+`<p>`, e o mapeamento de `img` em `src/mdx-components.tsx` renderiza um `<figure>` (elemento de bloco), que não pode
+ficar dentro de `<p>` (quebra a hidratação). Por isso o mapeamento de `p` em `mdx-components.tsx` detecta quando o
+único filho é uma imagem e pula o `<p>` nesse caso — se mexer nesse arquivo, não remova essa checagem sem entender
+o porquê.
 
 ## Conteúdo: blog
 

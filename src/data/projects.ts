@@ -9,7 +9,32 @@ import type { Lang, Project, ProjectsData } from "@/types";
 export const projectsByLang: ProjectsData = {
   pt: [
     {
+      title: "Enchiridion",
+      slug: "enchiridion",
+      date: "2026-08-29",
+      featured: true,
+      image: "/images/projects/enchiridion.webp",
+      description:
+        "Gerador de manuais de produto sem servidor, sem conta e sem build: personalize com prévia ao vivo e baixe um site estático pronto pra publicar.",
+      tags: ["JavaScript", "HTML", "CSS"],
+      links: [
+        {
+          label: "Visitar",
+          href: "https://enchiridion.andreyrosa.dev",
+          variant: "primary",
+          icon: "external",
+        },
+        {
+          label: "Repositório",
+          href: "https://github.com/andreyadriano/enchiridion",
+          variant: "secondary",
+          icon: "github",
+        },
+      ],
+    },
+    {
       title: "Reconhecimento de lances de xadrez com IA",
+      slug: "chess-recognition",
       date: "2025-03-01",
       featured: true,
       coverVariant: "chess-ai",
@@ -33,8 +58,9 @@ export const projectsByLang: ProjectsData = {
     },
     {
       title: "Site comercial para Disk Gás",
+      slug: "disk-gas",
       date: "2023-06-01",
-      featured: true,
+      featured: false,
       image: "/images/projects/disk-gas.webp",
       description:
         "Site institucional para um comércio de bairro, direcionando clientes para o WhatsApp. Também cuido da manutenção.",
@@ -50,6 +76,7 @@ export const projectsByLang: ProjectsData = {
     },
     {
       title: "Yin Yang",
+      slug: "yin-yang",
       date: "2019-08-01",
       featured: true,
       image: "/images/projects/yin-yang.webp",
@@ -74,7 +101,32 @@ export const projectsByLang: ProjectsData = {
   ],
   en: [
     {
+      title: "Enchiridion",
+      slug: "enchiridion",
+      date: "2026-08-29",
+      featured: true,
+      image: "/images/projects/enchiridion.webp",
+      description:
+        "Serverless, account-free, build-free product manual generator: customize it with a live preview and download a ready-to-host static site.",
+      tags: ["JavaScript", "HTML", "CSS"],
+      links: [
+        {
+          label: "Visit",
+          href: "https://enchiridion.andreyrosa.dev",
+          variant: "primary",
+          icon: "external",
+        },
+        {
+          label: "Repository",
+          href: "https://github.com/andreyadriano/enchiridion",
+          variant: "secondary",
+          icon: "github",
+        },
+      ],
+    },
+    {
       title: "Chess move recognition with AI",
+      slug: "chess-recognition",
       date: "2025-03-01",
       featured: true,
       coverVariant: "chess-ai",
@@ -98,8 +150,9 @@ export const projectsByLang: ProjectsData = {
     },
     {
       title: "Commercial site for Disk Gás",
+      slug: "disk-gas",
       date: "2023-06-01",
-      featured: true,
+      featured: false,
       image: "/images/projects/disk-gas.webp",
       description: "Business site for a local shop, directing customers to WhatsApp. I still maintain it.",
       tags: ["HTML", "CSS", "JavaScript"],
@@ -114,6 +167,7 @@ export const projectsByLang: ProjectsData = {
     },
     {
       title: "Yin Yang",
+      slug: "yin-yang",
       date: "2019-08-01",
       featured: true,
       image: "/images/projects/yin-yang.webp",
