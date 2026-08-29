@@ -109,7 +109,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </Reveal>
         <div className="grid md:grid-cols-3 gap-5">
           {projects.map((project, i) => (
-            <Reveal key={project.title} delayMs={i * 80}>
+            <Reveal key={project.slug} delayMs={i * 80}>
               <ProjectCard project={project} lang={lang} />
             </Reveal>
           ))}

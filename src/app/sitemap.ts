@@ -9,6 +9,7 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { getPostSlugs } from "@/lib/blog";
+import { getCaseStudySlugs } from "@/lib/projects";
 import type { Lang } from "@/types";
 
 const SITE_URL = "https://andreyrosa.dev";
@@ -33,6 +34,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: `${SITE_URL}/${lang}/blog/${slug}`,
         changeFrequency: "yearly",
         priority: 0.5,
+      });
+    }
+
+    for (const slug of getCaseStudySlugs(lang)) {
+      entries.push({
+        url: `${SITE_URL}/${lang}/projects/${slug}`,
+        changeFrequency: "yearly",
+        priority: 0.6,
       });
     }
   }

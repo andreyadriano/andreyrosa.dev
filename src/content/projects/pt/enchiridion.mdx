@@ -1,0 +1,31 @@
+O nome vem do *Enchiridion*, o manual de filosofia estoica de Epicteto: a palavra grega significa "o que se carrega
+na mão". Gostei da ideia de um manual pra ser consultado de verdade, não um PDF que ninguém abre depois da primeira
+semana.
+
+## De onde veio a ideia
+
+No trabalho, a gente usa um modelo de manual em HTML bem feito, com tradução e tudo, só que é sempre o mesmo
+modelo, pro mesmo tipo de produto. Depois de um tempo, bateu vontade de fazer algo diferente por conta própria.
+
+A ideia original era bem menor do que virou: só um template com alguns layouts diferentes e suporte a múltiplos
+idiomas, pensado pra alguém com um pouco de conhecimento técnico mexer no CSS (e um pouco no HTML) e deixar pronto
+pra outra pessoa, sem conhecimento nenhum de programação, só escrever o conteúdo do manual direto no HTML.
+
+Depois pensei em ir um passo além: o usuário escolhe o layout e já baixa um `.zip` só com os arquivos essenciais
+daquele template. Daí ficou fácil perceber que dava pra ir mais longe ainda, deixando escolher cor, fonte, idioma,
+tudo, antes de gerar esse `.zip`. Foi crescendo assim, um passo de cada vez, até virar o gerador que é hoje: cores,
+logo, fontes e um entre 4 layouts de navegação com prévia ao vivo, 6 identidades visuais prontas (ou 100%
+customizada), 3 idiomas com conteúdo de verdade traduzido, busca e exportação em PDF.
+
+## Por que HTML, CSS e JS puros
+
+Não foi uma decisão de arquitetura pensada desde o início. A ideia original era só um manual HTML simples, então
+começar sem framework fez sentido, e o projeto foi crescendo em cima disso sem nunca precisar mudar. Hoje isso
+significa que o `.zip` final roda em qualquer host estático, sem build e sem depender de nada em produção.
+
+## Acessibilidade e testes
+
+A validação de contraste WCAG AA em tempo real surgiu quando pedi pro Claude Code (uso IA no dia a dia de
+desenvolvimento) pra estudar critérios de acessibilidade e me ajudar a avaliar o manual gerado. A suíte de testes
+headless também não foi uma escolha minha desde o início: Puppeteer foi a ferramenta que o próprio Claude sugeriu
+quando pedi pra cobrir o fluxo inteiro: navegação entre os layouts, geração de PDF e o pacote final exportado.

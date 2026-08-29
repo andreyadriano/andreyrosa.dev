@@ -98,7 +98,9 @@
   },
   "projectsPage": {
     "title": "Projects",
-    "subtitle": "My personal projects, outside of what I build at work. I add new projects here as they come along, whether in my field or just out of technical curiosity."
+    "subtitle": "My personal projects, outside of what I build at work. I add new projects here as they come along, whether in my field or just out of technical curiosity.",
+    "back": "← Back to projects",
+    "caseStudy": "About"
   },
   "blogPage": {
     "title": "Blog",

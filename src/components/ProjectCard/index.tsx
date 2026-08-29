@@ -1,12 +1,20 @@
 // src/components/ProjectCard/index.tsx
 
-import { ExternalLink } from "lucide-react";
-import { GithubIcon, GITHUB_LINK_CLASSNAME } from "@/components/icons";
+import Link from "next/link";
+import { FileText } from "lucide-react";
 import { ProjectCover } from "./Cover";
+import { ProjectLinks } from "./Links";
 import { StackIcon } from "./StackIcon";
+import { hasCaseStudy } from "@/lib/projects";
+import { getDictionary } from "@/i18n/config";
 import type { Lang, Project } from "@/types";
 
-export function ProjectCard({ project, lang }: { project: Project; lang: Lang }) {
+export async function ProjectCard({ project, lang }: { project: Project; lang: Lang }) {
+  const dict = await getDictionary(lang);
+  const showCaseStudy = hasCaseStudy(lang, project.slug);
+  const primaryLinks = project.links.filter((link) => link.variant === "primary");
+  const secondaryLinks = project.links.filter((link) => link.variant !== "primary");
+
   return (
     <div className="flex h-full flex-col rounded-lg border border-border bg-surface p-5 hover:border-accent/40 hover:bg-surface-hover transition-colors">
       <ProjectCover
@@ -33,28 +41,18 @@ export function ProjectCard({ project, lang }: { project: Project; lang: Lang })
           </span>
         ))}
       </div>
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-4 border-t border-border">
-        {project.links.map((link) => {
-          const isGithub = link.icon === "github";
-          const LinkIcon = isGithub ? GithubIcon : ExternalLink;
-          const className = isGithub
-            ? GITHUB_LINK_CLASSNAME
-            : link.variant === "primary"
-              ? "bg-accent text-accent-fg hover:bg-accent-hover border-accent"
-              : "border-border hover:border-border-strong";
-          return (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${className}`}
-            >
-              <LinkIcon size={13} strokeWidth={1.75} />
-              {link.label}
-            </a>
-          );
-        })}
+      <div className="mt-auto flex flex-nowrap items-center gap-2 pt-4 border-t border-border overflow-x-auto">
+        <ProjectLinks links={primaryLinks} />
+        {showCaseStudy && (
+          <Link
+            href={`/${lang}/projects/${project.slug}`}
+            className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-medium transition-colors border-accent/50 text-accent hover:bg-accent hover:text-accent-fg hover:border-accent"
+          >
+            <FileText size={13} strokeWidth={1.75} />
+            {dict.projectsPage.caseStudy}
+          </Link>
+        )}
+        <ProjectLinks links={secondaryLinks} />
       </div>
     </div>
   );
